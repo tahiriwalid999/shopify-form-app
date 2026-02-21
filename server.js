@@ -1,4 +1,8 @@
 const express = require("express");
+
+const formRoutes = require("./form");
+app.use("/", formRoutes);
+
 const axios = require("axios");
 
 const app = express();
