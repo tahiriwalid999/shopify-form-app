@@ -1,13 +1,15 @@
 const express = require("express");
-
-const formRoutes = require("./form");
-app.use("/", formRoutes);
-
 const axios = require("axios");
 
+// أولًا نُنشئ app
 const app = express();
 app.use(express.json());
 
+// استدعاء ملفات أخرى بعد إنشاء app
+const formRoutes = require("./form");
+app.use("/", formRoutes);
+
+// باقي الكود
 const PORT = process.env.PORT || 3000;
 
 // الصفحة الرئيسية
@@ -18,10 +20,7 @@ app.get("/", (req, res) => {
 // نقطة تثبيت التطبيق
 app.get("/auth", (req, res) => {
   const shop = req.query.shop;
-
-  if (!shop) {
-    return res.status(400).send("Missing shop parameter");
-  }
+  if (!shop) return res.status(400).send("Missing shop parameter");
 
   const redirectUrl = `https://${shop}/admin/oauth/authorize?client_id=${process.env.SHOPIFY_API_KEY}&scope=read_orders,write_orders&redirect_uri=${process.env.SHOPIFY_REDIRECT_URI}`;
 
@@ -43,7 +42,6 @@ app.get("/auth/callback", async (req, res) => {
     );
 
     const accessToken = response.data.access_token;
-
     console.log("ACCESS TOKEN:", accessToken);
 
     res.send("App installed successfully!");
@@ -53,6 +51,7 @@ app.get("/auth/callback", async (req, res) => {
   }
 });
 
+// تشغيل السيرفر
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
